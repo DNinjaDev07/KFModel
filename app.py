@@ -10,7 +10,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 def main():
 	return {'message': 'Kidney Failure Prediction'}
 
-
+# Reserved method incase we need to use JSON inputs with JSON tags
 def validate_json(data):
     # Check if request contains JSON data
     if not data:
@@ -42,16 +42,23 @@ def predict_kidney_failure():
     # Get JSON data and do basic checks on input request 
     data = request.get_json()
 
-    validation_result = validate_json(data)
+  #  validation_result = validate_json(data)
 
-    # If validation fails, return the error message
-    if validation_result:
-        return validation_result
+    # # If validation fails, return the error message
+    # if validation_result:
+    #     return validation_result
+    
+    # Check if 'input' key exists in JSON data
+    if 'input' not in data:
+        return jsonify({"error": "JSON data must contain 'input' array"}), 400
 
-    age = data['age']
-    female = data['female']
-    egfr = data['egfr']
-    upcr = data['upcr']
+    # Get the 'input' array from the JSON data
+    input_array = data['input']
+
+    age = input_array[0]
+    female = input_array[1]
+    egfr = input_array[2] # estimated glomerular filtration rate
+    upcr = input_array[3] #urine protein creatinine ratio 
 
     mean_age = 6.598546
     mean_log_acr = 5.776576
@@ -64,16 +71,17 @@ def predict_kidney_failure():
     egfr = (egfr / 5) - mean_egfr
 
     # Transform log_acr from request before input to model:
-    log_acr = (5.3920 +
-               0.3072 * np.log(min(upcr / 50, 1)) +
-               1.5793 * np.log(max(min(upcr / 500, 1), 0.1)) +
-               1.1266 * np.log(max(upcr / 500, 1)))  - mean_log_acr
-
-    prob_1year = '0.5'
+    acr = (5.3920 +
+               0.3072 * np.log(min(upcr/ 50, 1)) +
+               1.5793 * np.log(max(min(upcr/ 500, 1), 0.1)) +
+               1.1266 * np.log(max(upcr/ 500, 1)))
+    
+    log_acr = np.log(acr)  - mean_log_acr
+    
+    prob_1year = 1 - (0.81210 ** (np.exp(((-0.22598) * age) + ((-0.18364) * female) + ((0.32050) * log_acr) + ((-0.46961) * egfr))))
+ 
     #prob_1year = 1 - {0.81210 ^ [((-0.22598 * age) + (-0.18364 * female) + (0.32050 * log_acr) + (-0.46961 * egfr))]}
-    return jsonify({'message': 'The probability of kidney failure in 1 year is '+prob_1year}), 200
-    # data
-    # jsonify({'message': 'tet'}), 200
+    return jsonify({'message': 'The probability of kidney failure in 1 year is '+str(prob_1year)}), 200
 
 if __name__ == '__main__':
     app.run()
