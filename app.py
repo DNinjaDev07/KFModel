@@ -11,30 +11,30 @@ def main():
 	return {'message': 'Kidney Failure Prediction'}
 
 # Reserved method incase we need to use JSON inputs with JSON tags
-def validate_json(data):
-    # Check if request contains JSON data
-    if not data:
-        return jsonify({"error": "Request must contain JSON data"}), 400
+# def validate_json(data):
+#     # Check if request contains JSON data
+#     if not data:
+#         return jsonify({"error": "Request must contain JSON data"}), 400
 
-    # Check if 'age', 'female', 'egfr', and 'upcr' are present in the JSON data
-    if 'age' not in data or 'female' not in data or 'egfr' not in data or 'upcr' not in data:
-        return jsonify({"error": "JSON data must contain 'age', 'female', 'egfr', and 'upcr'"}), 400
+#     # Check if 'age', 'female', 'egfr', and 'upcr' are present in the JSON data
+#     if 'age' not in data or 'female' not in data or 'egfr' not in data or 'upcr' not in data:
+#         return jsonify({"error": "JSON data must contain 'age', 'female', 'egfr', and 'upcr'"}), 400
 
-    # Check if 'age' is not null or empty
-    if not data['age']:
-        return jsonify({"error": "'age' cannot be null or empty"}), 400
+#     # Check if 'age' is not null or empty
+#     if not data['age']:
+#         return jsonify({"error": "'age' cannot be null or empty"}), 400
 
-    # Check if 'female' is not null or empty
-    if 'female' in data and data['female'] is None:
-        return jsonify({"error": "'female' cannot be null"}), 400
+#     # Check if 'female' is not null or empty
+#     if 'female' in data and data['female'] is None:
+#         return jsonify({"error": "'female' cannot be null"}), 400
 
-    # Check if 'egfr' is not null or empty
-    if not data['egfr']:
-        return jsonify({"error": "'egfr' cannot be null or empty"}), 400
+#     # Check if 'egfr' is not null or empty
+#     if not data['egfr']:
+#         return jsonify({"error": "'egfr' cannot be null or empty"}), 400
 
-    # Check if 'upcr' is not null or empty
-    if not data['upcr']:
-        return jsonify({"error": "'upcr' cannot be null or empty"}), 400
+#     # Check if 'upcr' is not null or empty
+#     if not data['upcr']:
+#         return jsonify({"error": "'upcr' cannot be null or empty"}), 400
 
 @app.route('/predict', methods=['POST'])
 def predict_kidney_failure():
