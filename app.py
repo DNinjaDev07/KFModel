@@ -79,7 +79,8 @@ def predict_kidney_failure():
     log_acr = np.log(acr)  - mean_log_acr
     
     prob_1year = 1 - (0.81210 ** (np.exp(((-0.22598) * age) + ((-0.18364) * female) + ((0.32050) * log_acr) + ((-0.46961) * egfr))))
- 
+
+    prob_1year = prob_1year *100
     #prob_1year = 1 - {0.81210 ^ [((-0.22598 * age) + (-0.18364 * female) + (0.32050 * log_acr) + (-0.46961 * egfr))]}
     return jsonify({'message': 'The probability of kidney failure in 1 year is '+str(prob_1year)}), 200
 
