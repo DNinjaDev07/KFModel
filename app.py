@@ -77,13 +77,14 @@ def predict_kidney_failure():
     phosphate = phosphate - mean_phosphate
 
     # uPCR (more commonly collected in the clinic), needs to be transformed into uACR (used by our model)
-    uacr = (5.3920 +
-            0.3072 * np.log(min(upcr / 50, 1)) +
-            1.5793 * np.log(max(min(upcr / 500, 1), 0.1)) +
-            1.1266 * np.log(max(upcr / 500, 1)))
-
     # Convert uACR to log-scale (makes coefficient easier to interpret)
-    uacr_log = np.log(uacr) - mean_uacr_log
+    uacr_log = (5.3920 +
+        0.3072 * np.log(min(upcr / 50, 1)) +
+        1.5793 * np.log(max(min(upcr / 500, 1), 0.1)) +
+        1.1266 * np.log(max(upcr / 500, 1)))
+
+    # Transform uACR before input to model:
+    uacr_log = uacr_log - mean_uacr_log
 
     # Predicting dialysis and death at 1- and 2-year timeframes
     # Confidence intervals (using standard errors on the coefficient estimates because who can tell)
